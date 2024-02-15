@@ -1,0 +1,9 @@
+@import "../index.scss";
+
+h1 {
+  @include node('场景');
+
+  &::marker {
+    line-height: 3.25rem;
+  }
+}

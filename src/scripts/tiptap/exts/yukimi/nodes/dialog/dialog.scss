@@ -1,0 +1,42 @@
+@import "../index.scss";
+
+p.dialog {
+  @include node('对话', '旁白');
+  font-size: large;
+  font-weight: bold;
+  margin: 0;
+
+  &::marker {
+    line-height: 2rem;
+  }
+
+  &::after {
+    content: ':';
+    margin-left: .125rem;
+  }
+
+  &+p:not(.dialog) {
+    position: relative;
+    margin-top: 0;
+
+    &:has(>:first-child.ProseMirror-trailingBreak)::after {
+      content: '对话内容';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      color: #aaa;
+    }
+  }
+
+  &:has(>:first-child.ProseMirror-trailingBreak)+p:not(.dialog):has(:first-child.ProseMirror-trailingBreak)::after {
+    content: '旁白内容';
+  }
+
+  &:not(:has(+p:not(.dialog))) {
+    text-decoration: underline var(--fallback-er, oklch(var(--er)/var(--tw-bg-opacity)));
+
+    &:hover::before {
+      @include tooltip('缺失内容');
+    }
+  }
+}

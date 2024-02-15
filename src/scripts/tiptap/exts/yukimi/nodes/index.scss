@@ -1,0 +1,45 @@
+@mixin marker-str($str) {
+  content: str-insert($str, ' ', str-length($str) + 1);
+}
+
+@mixin node($marker: '', $empty-marker: $marker) {
+  position: relative;
+  display: list-item;
+  width: fit-content;
+
+  >.ProseMirror-trailingBreak {
+    display: none;
+  }
+
+
+  &::marker {
+    @include marker-str($marker);
+    font-size: small;
+    font-weight: normal;
+    word-break: keep-all;
+    color: #888;
+  }
+
+  &:has(>.ProseMirror-trailingBreak)::marker {
+    @include marker-str($empty-marker);
+  }
+}
+
+@mixin tooltip($msg) {
+  content: $msg;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: fit-content;
+  height: fit-content;
+  font-size: small;
+  font-weight: normal;
+  word-wrap: break-word;
+  white-space: nowrap;
+  padding: .25rem .5rem;
+  background-color: var(--fallback-b1,oklch(var(--b1)/var(--tw-bg-opacity)));
+  border-radius: .25rem;
+  border: 1px solid var(--fallback-bc,oklch(var(--bc)/var(--tw-bg-opacity)));
+  box-shadow: 0 0 .25rem #0003;
+  z-index: 60;
+}
