@@ -18,6 +18,7 @@ p.dialog {
   &+p:not(.dialog) {
     position: relative;
     margin-top: 0;
+    margin-left: 1rem;
 
     &:has(>:first-child.ProseMirror-trailingBreak)::after {
       content: '对话内容';

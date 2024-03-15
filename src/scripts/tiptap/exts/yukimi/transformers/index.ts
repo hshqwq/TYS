@@ -1,10 +1,11 @@
+import { TiptapMarkJson } from "./checkers/mark";
 import { isNode } from "./checkers/node";
 import transformerMap from "./transformers-map";
 
 export type TiptapNodeJson<T extends string = string> = {
   type: T;
   content?: TiptapNodeJson[];
-  marks?: string[];
+  marks?: TiptapMarkJson[];
   attrs?: Record<string, string>;
   text?: string;
 };

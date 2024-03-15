@@ -27,8 +27,12 @@ const Dialog = Paragraph.extend({
     return [
       new InputRule({
         find: /^([^:]*)(:|：)$/g,
-        handler: ({ chain }) => {
-          chain().setDialog().run();
+        handler: ({ match, chain, range }) => {
+          const chaining = chain();
+          if (match[2] === "：") chaining.deleteRange({ from: range.to - 1, to: range.to });
+          chaining.setDialog();
+
+          chaining.run();
         },
       }),
     ];

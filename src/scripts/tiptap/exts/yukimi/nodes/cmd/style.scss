@@ -1,0 +1,6 @@
+@import '../index.scss';
+
+.cmd {
+  @include node('命令');
+  width: 100%;
+}

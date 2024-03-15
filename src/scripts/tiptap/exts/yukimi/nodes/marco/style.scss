@@ -1,0 +1,6 @@
+@import '../index.scss';
+
+.marco {
+  @include node('宏');
+  width: 100%;
+}

@@ -1,5 +1,5 @@
 import Editor from "@/components/pages/index/editor/editor";
-import Sidebar from "@/components/pages/index/sidebar";
+import Sidebar from "@/components/pages/index/sidebar/sidebar";
 
 export default function Index() {
   return (

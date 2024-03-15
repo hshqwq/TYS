@@ -74,6 +74,9 @@ dependencies:
   solidjs-use:
     specifier: ^2.3.0
     version: 2.3.0
+  tiptap-solid:
+    specifier: ^1.0.0
+    version: 1.0.0(@tiptap/core@2.2.2)(@tiptap/extension-bubble-menu@2.2.4)(@tiptap/extension-floating-menu@2.2.4)(solid-js@1.8.12)
 
 devDependencies:
   '@tailwindcss/typography':
@@ -794,6 +797,10 @@ packages:
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
     dev: true
 
+  /@popperjs/core@2.11.8:
+    resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
+    dev: false
+
   /@remirror/core-constants@2.0.2:
     resolution: {integrity: sha512-dyHY+sMF0ihPus3O27ODd4+agdHMEmuRdyiZJ2CCWjPV5UFmn17ZbElvk6WOGVE4rdCJKZQCrPV2BcikOMLUGQ==}
     dev: false
@@ -1192,6 +1199,17 @@ packages:
       '@tiptap/core': 2.2.2(@tiptap/pm@2.2.2)
     dev: false
 
+  /@tiptap/extension-bubble-menu@2.2.4(@tiptap/core@2.2.2)(@tiptap/pm@2.2.2):
+    resolution: {integrity: sha512-Nx1fS9jcFlhxaTDYlnayz2UulhK6CMaePc36+7PQIVI+u20RhgTCRNr25zKNemvsiM0RPZZVUjlHkxC0l5as1Q==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+      '@tiptap/pm': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.2.2(@tiptap/pm@2.2.2)
+      '@tiptap/pm': 2.2.2
+      tippy.js: 6.3.7
+    dev: false
+
   /@tiptap/extension-character-count@2.2.2(@tiptap/core@2.2.2)(@tiptap/pm@2.2.2):
     resolution: {integrity: sha512-aObDoKXxVEi3sLaJFfaFLtKMH6e3zgKCkPhXOROUsrdapmvn/ubTuEXdVjiV9YZ7U6t57IYjlXV/jiVwDSgIjA==}
     peerDependencies:
@@ -1218,6 +1236,17 @@ packages:
     dependencies:
       '@tiptap/core': 2.2.2(@tiptap/pm@2.2.2)
       '@tiptap/pm': 2.2.2
+    dev: false
+
+  /@tiptap/extension-floating-menu@2.2.4(@tiptap/core@2.2.2)(@tiptap/pm@2.2.2):
+    resolution: {integrity: sha512-U25l7PEzOmlAPugNRl8t8lqyhQZS6W/+3f92+FdwW9qXju3i62iX/3OGCC3Gv+vybmQ4fbZmMjvl+VDfenNi3A==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+      '@tiptap/pm': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.2.2(@tiptap/pm@2.2.2)
+      '@tiptap/pm': 2.2.2
+      tippy.js: 6.3.7
     dev: false
 
   /@tiptap/extension-hard-break@2.2.2(@tiptap/core@2.2.2):
@@ -4722,6 +4751,26 @@ packages:
   /throttle-debounce@3.0.1:
     resolution: {integrity: sha512-dTEWWNu6JmeVXY0ZYoPuH5cRIwc0MeGbJwah9KUNYSJwommQpCzTySTpEe8Gs1J23aeWEuAobe4Ag7EHVt/LOg==}
     engines: {node: '>=10'}
+    dev: false
+
+  /tippy.js@6.3.7:
+    resolution: {integrity: sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==}
+    dependencies:
+      '@popperjs/core': 2.11.8
+    dev: false
+
+  /tiptap-solid@1.0.0(@tiptap/core@2.2.2)(@tiptap/extension-bubble-menu@2.2.4)(@tiptap/extension-floating-menu@2.2.4)(solid-js@1.8.12):
+    resolution: {integrity: sha512-7v/39GN1JFg8+zrdyROLab4dQPQM6Fq+W1JQUWyJ5TdDqXXtg6dmfStMXds7OsmP5zL/BU2OQlr41IqacJZozg==}
+    peerDependencies:
+      '@tiptap/core': ^2.2.2
+      '@tiptap/extension-bubble-menu': ^2.2.2
+      '@tiptap/extension-floating-menu': ^2.2.2
+      solid-js: ^1.8.0
+    dependencies:
+      '@tiptap/core': 2.2.2(@tiptap/pm@2.2.2)
+      '@tiptap/extension-bubble-menu': 2.2.4(@tiptap/core@2.2.2)(@tiptap/pm@2.2.2)
+      '@tiptap/extension-floating-menu': 2.2.4(@tiptap/core@2.2.2)(@tiptap/pm@2.2.2)
+      solid-js: 1.8.12
     dev: false
 
   /to-fast-properties@2.0.0:

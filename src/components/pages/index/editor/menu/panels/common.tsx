@@ -35,8 +35,8 @@ export default function CommonPanel(props: { editor: Editor }) {
         </button>
         <button
           class="btn btn-outline btn-xs"
-          disabled
-          onClick={() => props.editor.chain().focus().setScene().run()}
+          disabled={props.editor.can().insertCmd()}
+          onClick={() => props.editor.chain().focus().insertCmd().run()}
         >
           <BsCommand />
           命令

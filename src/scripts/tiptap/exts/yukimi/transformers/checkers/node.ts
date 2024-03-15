@@ -1,4 +1,5 @@
 import { TiptapNodeJson } from "../index";
+import { isMark } from "./mark";
 
 export function isNode(json: unknown): json is TiptapNodeJson {
   if (typeof json !== "object") return false;
@@ -7,8 +8,9 @@ export function isNode(json: unknown): json is TiptapNodeJson {
 
   if ("marks" in json) {
     if (!(json.marks instanceof Array)) return false;
-    for (const mark of json.marks) if (typeof mark !== "string") return false;
+    for (const mark of json.marks) if (!isMark(mark)) return false;
   }
+
   if ("attrs" in json) {
     if (typeof json.attrs !== "object" || !json.attrs) return false;
 

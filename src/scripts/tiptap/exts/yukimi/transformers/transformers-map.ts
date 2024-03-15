@@ -1,13 +1,13 @@
-import commentTransformer from "./comment";
 import dialogTransformer from "./dialog";
 import paragraphTransformer from "./paragraph";
 import sceneTransformer from "./scene";
+import textTransformer from "./text";
 
 const map = {
   scene: sceneTransformer,
   dialog: dialogTransformer,
-  comment: commentTransformer,
   paragraph: paragraphTransformer,
+  text: textTransformer,
 } as const;
 
 export default map;

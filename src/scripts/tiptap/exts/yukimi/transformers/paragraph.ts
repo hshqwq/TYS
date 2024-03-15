@@ -1,7 +1,6 @@
-import { $skip, Transformer } from ".";
-import { transformComment } from "./comment";
+import { $skip, Transformer, TransformingTiptapNodeJson } from ".";
 
-const paragraphTransformer: Transformer<"paragraph"> = (node) => {
+const paragraphTransformer: Transformer<"paragraph"> = (node, line, doc, map) => {
   if (!node.content) return "";
 
   return node.content.reduce((res, node, i, nodes) => {
@@ -11,20 +10,20 @@ const paragraphTransformer: Transformer<"paragraph"> = (node) => {
 
     if (node.type === "text") {
       const nextNode = nodes[i + 1];
-      const text = node.text!;
+      const text = map.text(node as TransformingTiptapNodeJson<"text">, line, doc, map);
 
       if (nextNode?.type === "hardBreak") {
         nextNode[$skip] = true;
 
-        const commentSymbolPosition = text.indexOf("//");
+        const commentSymbolPosition = text.indexOf("#");
         if (commentSymbolPosition === -1) return res + text + "\\\n";
 
         const contentText = text.slice(0, commentSymbolPosition);
-        const commentText = transformComment(text.slice(commentSymbolPosition));
+        const commentText = text.slice(commentSymbolPosition);
         return `${res}${contentText}\\${commentText}\n`;
       }
 
-      return res + transformComment(text);
+      return res + text;
     }
 
     return res;

@@ -14,12 +14,13 @@ import { save } from "@/scripts/yukimi/save";
 
 function Skeleton() {
   return (
-    <div class="w-full h-full p-4 flex flex-col gap-2">
-      <div class="flex justify-between">
+    <div class="w-full h-full p-4 flex flex-col gap-2.5">
+      <div class="flex flex-none justify-between">
         <div class="skeleton w-96 h-4" />
         <div class="skeleton w-24 h-4" />
       </div>
-      <div class="skeleton w-full h-10" />
+      <div class="skeleton w-full h-full" />
+      <div class="skeleton w-full h-full" />
     </div>
   );
 }

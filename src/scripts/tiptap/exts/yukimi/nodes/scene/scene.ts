@@ -22,7 +22,7 @@ const Scene = Node.create({
   addInputRules() {
     return [
       new InputRule({
-        find: /^(scene|场景|#) (.*)$/,
+        find: /^(scene|场景|-) /,
         handler: ({ range, chain }) => {
           chain().deleteRange(range).setScene().run();
         },

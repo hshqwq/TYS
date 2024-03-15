@@ -1,0 +1,11 @@
+.sidebar-transition-enter-active,
+.sidebar-transition-exit-active {
+  transition: width 0.3s ease-in-out, opacity .3s ease-in-out;
+}
+
+.sidebar-transition-enter,
+.sidebar-transition-exit-to {
+  overflow: hidden;
+  width: 0;
+  opacity: 0;
+}
