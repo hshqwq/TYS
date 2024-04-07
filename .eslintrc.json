@@ -81,7 +81,8 @@
           ]
         },
         "import/resolver": {
-          "typescript": {}
+          "typescript": {},
+          "alias": [["@", "./src"]]
         }
       },
       "env": {

@@ -2,6 +2,11 @@ import { defineConfig } from "vite";
 import solidPlugin from "vite-plugin-solid";
 import { internalIpV4 } from "internal-ip";
 import { resolve } from "path";
+import { writeFile } from "fs/promises";
+
+writeFile("./node_modules/@vrite/tiptap-solid/dist/esm/index.d.ts", 'export * from "../types/";', {
+  encoding: "utf8",
+});
 
 // @ts-expect-error process is a nodejs global
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM);
