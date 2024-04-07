@@ -14,7 +14,6 @@ export default function CommonPanel(props: { editor: Editor }) {
     () => "italic",
     {},
   );
-
   return (
     <div class="flex min-w-full h-full w-fit">
       <div class="divider divider-horizontal text-xs ml-1">语句</div>

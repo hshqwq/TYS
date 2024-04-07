@@ -1,35 +1,76 @@
-import { createTiptapEditor, useEditorJSON } from "solid-tiptap";
-import TiptapExtensions from "@/configs/tiptap/exts";
+import { SolidEditorContent, useEditor } from "@vrite/tiptap-solid";
 import EditorMenu from "./menu/menu";
-import { createEffect, onMount } from "solid-js";
+import { Setter, createSignal, onMount } from "solid-js";
 import { save } from "@/scripts/yukimi/save";
-import { onKeyStroke } from "solidjs-use";
+import { onKeyStroke, whenever } from "solidjs-use";
 import { isDev } from "solid-js/web";
 import EditorFooter from "./footer/footer";
+import parse from "@/scripts/tiptap/exts/yukimi/transformers/parse";
+import isYkmPath from "@/scripts/yukimi/checkers/ykm-path";
+import TiptapExtensions from "@/configs/tiptap/exts";
+import { exists, readTextFile } from "@tauri-apps/plugin-fs";
+
+export type EditingFilePath = string | null;
+
+const [editingFilePath, setEditingFilePath] = createSignal<EditingFilePath>(null);
+let lastEditingFilePath: EditingFilePath = null;
+
+const setEditingFilePathWithCheck: Setter<EditingFilePath> = async (
+  path: EditingFilePath | ((prev: EditingFilePath) => EditingFilePath),
+) => {
+  const newPath = path instanceof Function ? path(editingFilePath()) : path;
+
+  if (newPath !== null)
+    if (!isYkmPath(newPath) || !(await exists(newPath))) return editingFilePath();
+
+  lastEditingFilePath = editingFilePath();
+
+  return setEditingFilePath(newPath);
+};
+
+export { editingFilePath, setEditingFilePathWithCheck as setEditingFilePath };
 
 export default function Editor() {
-  let editorRef!: HTMLDivElement;
-
-  const editor = createTiptapEditor(() => ({
-    element: editorRef,
+  const editor = useEditor({
     extensions: TiptapExtensions,
     content: ``,
     autofocus: true,
-  }));
+    editable: !!editingFilePath(),
+  });
+
+  whenever(editingFilePath, async () => {
+    console.log(editingFilePath());
+
+    lastEditingFilePath && save(lastEditingFilePath, editor().getJSON());
+
+    if (!editingFilePath()) {
+      editor().setEditable(false);
+      editor().commands.setContent("");
+      return;
+    }
+
+    editor().setEditable(false);
+    editor().commands.setContent('<div class="text-base-300">Loading...</div>');
+
+    const newFileContent = parse(await readTextFile(editingFilePath()!));
+
+    editor().commands.setContent(newFileContent);
+    editor().setEditable(true);
+  });
 
   onMount(() => {
     onKeyStroke(
       ["s", "S"],
       (ev) => {
-        if (ev.ctrlKey) save(editor()!.getJSON());
+        if (ev.ctrlKey && editingFilePath()) save(editingFilePath()!, editor().getJSON());
       },
       { dedupe: true },
     );
   });
 
   if (isDev) {
-    const json = useEditorJSON(editor);
-    createEffect(() => {
+    const json = () => editor().getJSON();
+    editor().on("update", () => {
       console.log(JSON.stringify(json(), null, 2));
     });
   }
@@ -38,11 +79,11 @@ export default function Editor() {
     <div class="flex-auto w-full h-full flex flex-col bg-base-200 overflow-hidden">
       <EditorMenu editor={editor()} />
       <div class="flex-auto w-full max-w-full h-full max-h-full overflow-hidden bg-base-100 cursor-text">
-        <div
-          ref={editorRef}
+        <SolidEditorContent
+          editor={editor()}
           onClick={(ev) => ev.target === ev.currentTarget && editor()?.commands.focus()}
           class="w-full h-full max-h-full max-w-full p-6 pl-16 prose prose-sm overflow-auto spelling-error selection:bg-base-200"
-        ></div>
+        ></SolidEditorContent>
       </div>
       <EditorFooter editor={editor()} />
     </div>

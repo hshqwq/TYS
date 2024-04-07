@@ -1,9 +1,9 @@
 import { Combobox } from "@kobalte/core";
-import { NodeViewProps } from "@tiptap/core";
 import { BsChevronDown, BsChevronUp } from "solid-icons/bs";
-import { Match, Show, Switch, createSignal } from "solid-js";
+import { Match, Show, Switch, createMemo, createSignal } from "solid-js";
 import { useFocusWithin } from "solidjs-use";
-import { NodeViewWrapper } from "tiptap-solid";
+import { NodeViewWrapper, useSolidNodeView } from "@vrite/tiptap-solid";
+import { commands } from "@/scripts/yukimi/command-manager";
 
 type CmdInputProps = {
   label?: string;
@@ -65,20 +65,27 @@ function CmdInput(props: CmdInputProps) {
   );
 }
 
-export default function Cmd(props: NodeViewProps) {
-  const [wrapperRef, setWrapperRef] = createSignal<HTMLDivElement>();
-  const focusedWithin = useFocusWithin(wrapperRef);
+export default function Cmd() {
+  const [containerRef, setContainerRef] = createSignal<HTMLDivElement>();
+  const focusedWithin = useFocusWithin(containerRef);
   const [expand, setExpand] = createSignal<boolean | null>(null);
   const expanded = () => expand() ?? focusedWithin();
+  const { state } = useSolidNodeView();
+
+  const commandOptions = createMemo(() =>
+    commands()
+      .filter((cmd) => cmd.visible === undefined || cmd.visible)
+      .map((cmd) => cmd.name),
+  );
 
   return (
-    <NodeViewWrapper ref={setWrapperRef}>
-      <div class="cmd">
+    <NodeViewWrapper>
+      <div ref={setContainerRef} contentEditable={false} class="cmd">
         <div class="form-control w-full gap-2">
           <CmdInput
             label="命令名"
-            onChange={(v) => props.updateAttributes({ name: v })}
-            options={["test", "ttttest"]}
+            onChange={(v) => state().updateAttributes({ name: v })}
+            options={commandOptions()}
             errorMsg="未知的命令"
           />
 

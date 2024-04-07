@@ -2,24 +2,30 @@ import { TiptapMarkJson } from "./checkers/mark";
 import { isNode } from "./checkers/node";
 import transformerMap from "./transformers-map";
 
-export type TiptapNodeJson<T extends string = string> = {
+export type TiptapNodeJson<
+  T extends string = string,
+  A extends Record<string, unknown> = Record<string, unknown>,
+> = {
   type: T;
   content?: TiptapNodeJson[];
   marks?: TiptapMarkJson[];
-  attrs?: Record<string, string>;
+  attrs?: A;
   text?: string;
 };
 
-export type TransformingTiptapNodeJson<T extends string = string> = Omit<
-  TiptapNodeJson<T>,
-  "content"
-> & {
+export type TransformingTiptapNodeJson<
+  T extends string = string,
+  A extends Record<string, unknown> = Record<string, unknown>,
+> = Omit<TiptapNodeJson<T, A>, "content"> & {
   [$skip]?: boolean;
   content?: TransformingTiptapNodeJson[];
 };
 
-export type Transformer<T extends string = string> = (
-  node: TransformingTiptapNodeJson<T>,
+export type Transformer<
+  T extends string = string,
+  A extends Record<string, unknown> = Record<string, unknown>,
+> = (
+  node: TransformingTiptapNodeJson<T, A>,
   line: number,
   doc: TransformingTiptapNodeJson[],
   map: typeof transformerMap,

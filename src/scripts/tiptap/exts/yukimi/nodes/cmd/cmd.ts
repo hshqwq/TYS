@@ -1,8 +1,9 @@
-import "./style.scss";
+import "./cmd.scss";
 
 import Component from "./component";
-import { SolidNodeViewRenderer } from "tiptap-solid";
+import { SolidNodeViewRenderer } from "@vrite/tiptap-solid";
 import { CommandProps, InputRule, Node, RawCommands } from "@tiptap/core";
+import { CommandArg } from "@/scripts/yukimi/command-manager";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -13,18 +14,10 @@ declare module "@tiptap/core" {
   }
 }
 
-export enum CommandType {}
-
-export type CommandArg = {
-  name: string;
-  type: CommandType;
-  value: string;
-};
-
 export type CommandAttrs = {
   name: string;
   args: CommandArg[];
-  expanded: boolean;
+  expanded?: boolean;
 };
 
 const Cmd = Node.create({

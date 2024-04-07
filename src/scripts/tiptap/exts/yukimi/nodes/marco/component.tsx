@@ -1,9 +1,8 @@
 import { Combobox } from "@kobalte/core";
-import { NodeViewProps } from "@tiptap/core";
-import { BsChevronDown, BsChevronUp, BsPlug, BsPlus } from "solid-icons/bs";
+import { BsChevronDown, BsChevronUp, BsPlus } from "solid-icons/bs";
 import { For, Match, Show, Switch, createSignal } from "solid-js";
 import { useFocus, useFocusWithin } from "solidjs-use";
-import { NodeViewWrapper } from "tiptap-solid";
+import { NodeViewWrapper } from "@vrite/tiptap-solid";
 
 type CmdInputProps = {
   label?: string;
@@ -68,26 +67,26 @@ function CmdInput(props: CmdInputProps) {
   );
 }
 
-export default function Marco(props: NodeViewProps) {
-  const [wrapperRef, setWrapperRef] = createSignal<HTMLDivElement>();
-  const focusedWithin = useFocusWithin(wrapperRef);
+export default function Marco() {
+  const [containerRef, setContainerRef] = createSignal<HTMLDivElement>();
+  const focusedWithin = useFocusWithin(containerRef);
   const [expand, setExpand] = createSignal<boolean | null>(null);
 
   const expanded = () => expand() ?? focusedWithin();
 
   const addArgument = () => {
-    const args = props.node.attrs.args || [];
-    args.push({
-      name: "",
-      type: "",
-      defaultValue: null,
-    });
-    props.updateAttributes({ args });
+    // const args = props.node.attrs.args || [];
+    // args.push({
+    //   name: "",
+    //   type: "",
+    //   defaultValue: null,
+    // });
+    // props.updateAttributes({ args });
   };
 
   return (
-    <NodeViewWrapper ref={setWrapperRef}>
-      <div class="marco" contentEditable={false}>
+    <NodeViewWrapper>
+      <div ref={setContainerRef} class="marco" contentEditable={false}>
         <div class="form-control w-full gap-2 items-start">
           <input class="text-lg h-6" placeholder="宏名" />
 
@@ -105,18 +104,18 @@ export default function Marco(props: NodeViewProps) {
           </button>
 
           <Show when={expanded()}>
-            <For each={props.node.attrs.args || []}>
+            <For each={/* props.node.attrs.args || */ []}>
               {(arg) => (
                 <div class="flex join w-full">
                   <input
                     class="join-item input input-sm input-bordered max-w-sm"
                     placeholder="参数"
                   >
-                    {arg.name}
+                    {/* {arg.name} */}
                   </input>
                   <input class="join-item input input-sm input-bordered max-w-xs"></input>
                   <input class="join-item input input-sm input-bordered max-w-sm">
-                    {arg.defaultValue}
+                    {/* {arg.defaultValue} */}
                   </input>
                 </div>
               )}

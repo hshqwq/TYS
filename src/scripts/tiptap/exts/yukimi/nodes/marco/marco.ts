@@ -1,7 +1,7 @@
-import "./style.scss";
+import "./marco.scss";
 
 import Component from "./component";
-import { SolidNodeViewRenderer } from "tiptap-solid";
+import { SolidNodeViewRenderer } from "@vrite/tiptap-solid";
 import { CommandProps, InputRule, Node, RawCommands } from "@tiptap/core";
 
 declare module "@tiptap/core" {

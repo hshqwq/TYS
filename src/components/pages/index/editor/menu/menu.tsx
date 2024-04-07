@@ -9,8 +9,9 @@ import {
   BsSave,
 } from "solid-icons/bs";
 import CommonPanel from "./panels/common";
-import { createEditorTransaction } from "solid-tiptap";
 import { save } from "@/scripts/yukimi/save";
+import { createEditorTransaction } from "solid-tiptap";
+import { editingFilePath } from "../editor";
 
 function Skeleton() {
   return (
@@ -25,7 +26,7 @@ function Skeleton() {
   );
 }
 
-export default function EditorMenu(props: { editor: Editor | undefined }) {
+export default function EditorMenu(props: { editor: Editor }) {
   const [open, setOpen] = createSignal<boolean>(true);
   const [tab, setTab] = createSignal<string>("");
 
@@ -49,20 +50,23 @@ export default function EditorMenu(props: { editor: Editor | undefined }) {
                 <button
                   class="btn btn-outline btn-xs"
                   disabled={!canUndo()}
-                  onClick={() => props.editor!.chain().focus().undo().run()}
+                  onClick={() => props.editor.chain().focus().undo().run()}
                 >
                   <BsArrow90degLeft />
                 </button>
                 <button
                   class="btn btn-outline btn-xs"
                   disabled={!canRedo()}
-                  onClick={() => props.editor!.chain().focus().redo().run()}
+                  onClick={() => props.editor.chain().focus().redo().run()}
                 >
                   <BsArrow90degRight />
                 </button>
                 <button
                   class="btn btn-outline btn-xs"
-                  onClick={() => save(props.editor!.getJSON())}
+                  disabled={!editingFilePath()}
+                  onClick={() =>
+                    editingFilePath() && save(editingFilePath()!, props.editor.getJSON())
+                  }
                 >
                   <BsSave />
                 </button>
@@ -106,7 +110,7 @@ export default function EditorMenu(props: { editor: Editor | undefined }) {
           <Show when={open()}>
             <div class="h-28 p-4 max-h-28 max-w-full overflow-auto">
               <Tabs.Content value="common" class="w-fit h-full">
-                <CommonPanel editor={props.editor!} />
+                <CommonPanel editor={props.editor} />
               </Tabs.Content>
               <Tabs.Content value="TEST" class="w-fit h-full">
                 TEST

@@ -1,6 +1,6 @@
 @import "../index.scss";
 
-h1 {
+.tiptap h1 {
   @include node('场景');
 
   &::marker {

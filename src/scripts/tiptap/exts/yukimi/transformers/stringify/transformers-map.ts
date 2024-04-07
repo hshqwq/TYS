@@ -1,3 +1,4 @@
+import cmdTransformer from "./cmd";
 import dialogTransformer from "./dialog";
 import paragraphTransformer from "./paragraph";
 import sceneTransformer from "./scene";
@@ -8,6 +9,7 @@ const map = {
   dialog: dialogTransformer,
   paragraph: paragraphTransformer,
   text: textTransformer,
+  cmd: cmdTransformer,
 } as const;
 
 export default map;

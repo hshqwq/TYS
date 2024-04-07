@@ -1,6 +1,6 @@
 @import "../index.scss";
 
-p.dialog {
+.tiptap p.dialog {
   @include node('对话', '旁白');
   font-size: large;
   font-weight: bold;
