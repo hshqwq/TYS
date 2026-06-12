@@ -1,8 +1,9 @@
-import { defineConfig } from "vite";
-import solidPlugin from "vite-plugin-solid";
+import tailwindcss from "@tailwindcss/vite";
+import { writeFile } from "fs/promises";
 import { internalIpV4 } from "internal-ip";
 import { resolve } from "path";
-import { writeFile } from "fs/promises";
+import { defineConfig } from "vite";
+import solidPlugin from "vite-plugin-solid";
 
 writeFile("./node_modules/@vrite/tiptap-solid/dist/esm/index.d.ts", 'export * from "../types/";', {
   encoding: "utf8",
@@ -13,7 +14,7 @@ const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM);
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [solidPlugin()],
+  plugins: [solidPlugin(), tailwindcss()],
 
   resolve: {
     alias: {
@@ -28,7 +29,7 @@ export default defineConfig(async () => ({
   clearScreen: false,
   // 2. tauri expects a fixed port, fail if that port is not available
   server: {
-    port: 1420,
+    port: 2174,
     strictPort: true,
     host: mobile ? "0.0.0.0" : false,
     hmr: mobile
@@ -44,6 +45,6 @@ export default defineConfig(async () => ({
     },
   },
   build: {
-    target: "es2021",
+    target: "es2024",
   },
 }));

@@ -1,0 +1,11 @@
+.menu-panel-transition-enter-active,
+.menu-panel-transition-exit-active {
+  transition: margin 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.menu-panel-transition-enter,
+.menu-panel-transition-exit-to {
+  margin-top: -8rem;
+  opacity: 0;
+  overflow: hidden;
+}

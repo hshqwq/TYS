@@ -1,14 +1,15 @@
-import { SolidEditorContent, useEditor } from "@vrite/tiptap-solid";
-import EditorMenu from "./menu/menu";
-import { Setter, createSignal, onMount } from "solid-js";
-import { save } from "@/scripts/yukimi/save";
-import { onKeyStroke, whenever } from "solidjs-use";
-import { isDev } from "solid-js/web";
-import EditorFooter from "./footer/footer";
+import TiptapExtensions from "@/configs/tiptap/exts";
 import parse from "@/scripts/tiptap/exts/yukimi/transformers/parse";
 import isYkmPath from "@/scripts/yukimi/checkers/ykm-path";
-import TiptapExtensions from "@/configs/tiptap/exts";
+import { save } from "@/scripts/yukimi/save";
+import { globalStore } from "@/store/global";
 import { exists, readTextFile } from "@tauri-apps/plugin-fs";
+import { SolidEditorContent, useEditor } from "@vrite/tiptap-solid";
+import { Setter, createSignal, onMount } from "solid-js";
+import { isDev } from "solid-js/web";
+import { onKeyStroke, whenever } from "solidjs-use";
+import EditorFooter from "./footer/footer";
+import EditorMenu from "./menu/menu";
 
 export type EditingFilePath = string | null;
 
@@ -36,12 +37,14 @@ export default function Editor() {
     content: ``,
     autofocus: true,
     editable: !!editingFilePath(),
+    onUpdate: () => globalStore.saved = false
   });
 
   whenever(editingFilePath, async () => {
     console.log(editingFilePath());
 
-    lastEditingFilePath && save(lastEditingFilePath, editor().getJSON());
+    lastEditingFilePath && await save(lastEditingFilePath, editor().getJSON());
+    globalStore.saved = true;
 
     if (!editingFilePath()) {
       editor().setEditable(false);
@@ -53,7 +56,6 @@ export default function Editor() {
     editor().commands.setContent('<div class="text-base-300">Loading...</div>');
 
     const newFileContent = parse(await readTextFile(editingFilePath()!));
-
     editor().commands.setContent(newFileContent);
     editor().setEditable(true);
   });
@@ -61,8 +63,11 @@ export default function Editor() {
   onMount(() => {
     onKeyStroke(
       ["s", "S"],
-      (ev) => {
-        if (ev.ctrlKey && editingFilePath()) save(editingFilePath()!, editor().getJSON());
+      async (ev) => {
+        if (ev.ctrlKey && editingFilePath()) {
+          await save(editingFilePath()!, editor().getJSON());
+          globalStore.saved = true;
+        };
       },
       { dedupe: true },
     );

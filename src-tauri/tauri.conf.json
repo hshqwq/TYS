@@ -2,9 +2,10 @@
   "build": {
     "beforeDevCommand": "pnpm run dev:vite",
     "beforeBuildCommand": "pnpm run build:vite",
-    "devUrl": "http://localhost:1420",
+    "devUrl": "http://localhost:2174",
     "frontendDist": "../dist"
   },
+  "identifier": "xyz.yomli.tys",
   "productName": "TYS",
   "version": "0.0.1",
   "app": {
@@ -32,14 +33,6 @@
       "appimage": {
         "bundleMediaFramework": false
       }
-    }
-  },
-  "plugins": {
-    "shell": {
-      "open": true
-    },
-    "fs": {
-      "allow": [{"path": "**"}]
     }
   }
 }

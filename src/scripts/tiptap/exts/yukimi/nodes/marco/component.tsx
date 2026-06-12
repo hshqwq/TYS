@@ -1,8 +1,8 @@
-import { Combobox } from "@kobalte/core";
+import { Combobox } from "@ark-ui/solid";
+import { NodeViewWrapper } from "@vrite/tiptap-solid";
 import { BsChevronDown, BsChevronUp, BsPlus } from "solid-icons/bs";
 import { For, Match, Show, Switch, createSignal } from "solid-js";
 import { useFocus, useFocusWithin } from "solidjs-use";
-import { NodeViewWrapper } from "@vrite/tiptap-solid";
 
 type CmdInputProps = {
   label?: string;

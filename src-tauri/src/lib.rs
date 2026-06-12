@@ -14,7 +14,8 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
             file_list::get_scripts,
-            open_with_file_manager::open_with_file_manager_cmd,
+            file_list::set_base_dir,
+            open_with_file_manager::open_with_file_manager_cmd
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

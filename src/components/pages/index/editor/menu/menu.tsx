@@ -1,18 +1,20 @@
-import { Show, createSignal } from "solid-js";
+import { save } from "@/scripts/yukimi/save";
+import { globalStore } from "@/store/global";
+import { Tabs } from "@ark-ui/solid";
 import { Editor } from "@tiptap/core";
-import { Tabs } from "@kobalte/core";
 import {
-  BsChevronUp,
-  BsChevronDown,
   BsArrow90degLeft,
   BsArrow90degRight,
+  BsChevronDown,
+  BsChevronUp,
   BsSave,
 } from "solid-icons/bs";
-import CommonPanel from "./panels/common";
-import { save } from "@/scripts/yukimi/save";
+import { Show, createSignal } from "solid-js";
 import { createEditorTransaction } from "solid-tiptap";
+import { Transition } from "solid-transition-group";
 import { editingFilePath } from "../editor";
-
+import CommonPanel from "./panels/common";
+import "./transition.scss";
 function Skeleton() {
   return (
     <div class="w-full h-full p-4 flex flex-col gap-2.5">
@@ -20,15 +22,15 @@ function Skeleton() {
         <div class="skeleton w-96 h-4" />
         <div class="skeleton w-24 h-4" />
       </div>
-      <div class="skeleton w-full h-full" />
-      <div class="skeleton w-full h-full" />
+      <div class="skeleton w-full h-4" />
+      <div class="skeleton w-full h-4" />
     </div>
   );
 }
 
-export default function EditorMenu(props: { editor: Editor }) {
+export default function EditorMenu(props: { editor: Editor; }) {
   const [open, setOpen] = createSignal<boolean>(true);
-  const [tab, setTab] = createSignal<string>("");
+  const [tab, setTab] = createSignal<string>("common");
 
   const canUndo = createEditorTransaction(
     () => props.editor,
@@ -40,10 +42,10 @@ export default function EditorMenu(props: { editor: Editor }) {
   );
 
   return (
-    <div class="flex-none w-full max-w-full h-36 min-h-36 bg-base-100 shadow-md shadow-primary z-20">
-      <Show when={props.editor} fallback={<Skeleton />}>
-        <Tabs.Root value={tab()} onChange={(v) => setTab(v)}>
-          <div class="relative flex pl-4 pr-4 justify-between h-8 w-full pb-1 border-b-2 border-primary items-center">
+    <div class="flex-none w-full max-w-full max-h-36 bg-base-100 border-b border-neutral z-20">
+      <Show when={props.editor && editingFilePath()} fallback={<Skeleton />}>
+        <Tabs.Root value={tab()} onValueChange={(v) => setTab(v.value)}>
+          <div class="relative flex px-4 py-2 justify-between h-8 w-full border-b border-neutral items-center bg-base-100 z-20">
             {/* left */}
             <div class="flex items-center">
               <div class="flex items-center gap-0.5">
@@ -64,8 +66,10 @@ export default function EditorMenu(props: { editor: Editor }) {
                 <button
                   class="btn btn-outline btn-xs"
                   disabled={!editingFilePath()}
-                  onClick={() =>
-                    editingFilePath() && save(editingFilePath()!, props.editor.getJSON())
+                  onClick={async () =>{
+                    editingFilePath() && await save(editingFilePath()!, props.editor.getJSON());
+                    globalStore.saved = true;
+                  }
                   }
                 >
                   <BsSave />
@@ -74,9 +78,10 @@ export default function EditorMenu(props: { editor: Editor }) {
 
               <div class="divider divider-horizontal ml-0.5 mr-0.5" />
 
-              <Tabs.List class="tabs tabs-boxed tabs-xs bg-transparent relative">
+              <Tabs.List class="tabs tabs-border tabs-xs bg-transparent relative" role="tablist">
                 <Tabs.Trigger
                   class="tab"
+                  role="tab"
                   classList={{ "tab-active font-bold": tab() === "common" }}
                   value="common"
                 >
@@ -84,6 +89,7 @@ export default function EditorMenu(props: { editor: Editor }) {
                 </Tabs.Trigger>
                 <Tabs.Trigger
                   class="tab"
+                  role="tab"
                   classList={{ "tab-active font-bold": tab() === "TEST" }}
                   value="TEST"
                 >
@@ -107,16 +113,18 @@ export default function EditorMenu(props: { editor: Editor }) {
           </div>
 
           {/* panels */}
-          <Show when={open()}>
-            <div class="h-28 p-4 max-h-28 max-w-full overflow-auto">
-              <Tabs.Content value="common" class="w-fit h-full">
-                <CommonPanel editor={props.editor} />
-              </Tabs.Content>
-              <Tabs.Content value="TEST" class="w-fit h-full">
-                TEST
-              </Tabs.Content>
-            </div>
-          </Show>
+          <Transition name="menu-panel-transition">
+            <Show when={open()}>
+              <div class="h-28 p-4 max-h-28 max-w-full overflow-x-auto overflow-y-hidden z-10">
+                <Tabs.Content value="common" class="w-fit h-full">
+                  <CommonPanel editor={props.editor} />
+                </Tabs.Content>
+                <Tabs.Content value="TEST" class="w-fit h-full">
+                  TEST
+                </Tabs.Content>
+              </div>
+            </Show>
+          </Transition>
         </Tabs.Root>
       </Show>
     </div>

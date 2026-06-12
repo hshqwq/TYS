@@ -34,7 +34,7 @@ impl Serialize for FileInfo {
 }
 
 #[tauri::command]
-pub fn get_scripts(path: String) -> Vec<FileInfo> {
+pub fn get_scripts(path: String, max_len: usize) -> Vec<FileInfo> {
     let target_dir = Path::new(&path);
 
     if !target_dir.exists() || !target_dir.is_dir() {
@@ -85,7 +85,7 @@ pub fn get_scripts(path: String) -> Vec<FileInfo> {
             }
 
             let file = fs::read_to_string(path).unwrap();
-            let summary = file[0..min(file.len(), 50)].to_string().into();
+            let summary = file[0..min(file.len(), max_len)].to_string().into();
 
             FileInfo {
                 name: name,
@@ -97,4 +97,13 @@ pub fn get_scripts(path: String) -> Vec<FileInfo> {
         .collect();
 
     res
+}
+
+#[tauri::command]
+pub fn set_base_dir() -> Result<String, String> {
+    if let Some(path) = rfd::FileDialog::new().pick_folder() {
+      Ok(path.to_str().unwrap().replace("\\", "/").to_string())
+    } else {
+      Err("No folder selected".to_string())
+    }
 }
