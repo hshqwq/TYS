@@ -7,7 +7,7 @@ import resolvePath from "@/scripts/util/path/resolve";
 import { globalStore } from "@/store/global";
 import { createForm, submit, zodForm } from "@modular-forms/solid";
 import { BsFileEarmarkFont, BsFolder2, BsPlus, BsSearch, BsThreeDotsVertical, BsX } from "solid-icons/bs";
-import { For, Match, Show, Switch, createEffect, createMemo, createResource, createSignal } from "solid-js";
+import { For, Match, Show, Switch, createEffect, createMemo, createResource, createSignal, onMount } from "solid-js";
 import { z } from "zod";
 import { setEditingFilePath } from "../../editor/editor";
 
@@ -22,8 +22,8 @@ export function YkmScript(props: {
     <div class="flex items-center" onClick={props.onClick}>
       <BsFileEarmarkFont class="mr-2" />
       <div>
-        <h1 class="font-bold">{props.name}</h1>
-        <p class="text-xs text-base-300">{props.summary.length >= editorConfig.maxFileSummaryLength ? props.summary + '…' : props.summary}</p>
+        <h1 class="max-w-full font-bold truncate">{props.name}</h1>
+        <p class="text-xs text-base-300 break-all">{props.summary.length >= editorConfig.maxFileSummaryLength ? props.summary + '…' : props.summary}</p>
       </div>
     </div>
   );
@@ -37,7 +37,7 @@ export function Dir(props: {
   return (
     <div class="flex items-center" onClick={props.onClick}>
       <BsFolder2 class="mr-2" />
-      <div class="font-bold">{props.name}</div>
+      <div class="max-w-full font-bold truncate">{props.name}</div>
     </div>
   );
 }
@@ -45,9 +45,9 @@ export function Dir(props: {
 export default function Files(props: { rootDir: string; }) {
   const [path, setPath] = createSignal<string[]>([], { equals: false });
   const resolvedPath = () => resolvePath(props.rootDir, ...path());
-  const fileGetter = async () => ((await get_scripts(resolvedPath(), editorConfig.maxFileSummaryLength || 80)) || [])
+  const fileGetter = async () => (props.rootDir ? ((await get_scripts(resolvedPath(), editorConfig.maxFileSummaryLength || 80)) || []) : [])
     .sort((a, b) => a.file_type === FileType.Dir && b.file_type !== FileType.Dir ? -1 : 1);
-  const [files, { refetch }] = createResource(fileGetter);
+  const [files, { refetch }] = createResource([], fileGetter);
 
   // search
   const [searchText, setSearchText] = createSignal("");
@@ -63,12 +63,17 @@ export default function Files(props: { rootDir: string; }) {
   createEffect(() => {
     if (globalStore.saved)
       refetch();
-  })
+  });
 
-  createEffect(() => {
-    path();
-    props.rootDir;
-    refetch();
+
+  onMount(() => {
+    setTimeout(refetch, 100);
+
+    createEffect(() => {
+      path();
+      props.rootDir;
+      refetch();
+    });
   });
 
   log(() => [resolvedPath(), files()]);
@@ -117,7 +122,7 @@ export default function Files(props: { rootDir: string; }) {
 
   return (
     <div class="flex flex-col justify-between w-full h-full">
-      <ul class="w-full h-full overflow-auto border-b border-base-200">
+      <ul class="w-full h-full max-h-full overflow-auto border-b border-base-200">
         <Show when={path().length}>
           <div class="w-full p-2 border-base-200 border-t hover:bg-base-200 transition-colors">
             <Dir
@@ -152,7 +157,7 @@ export default function Files(props: { rootDir: string; }) {
               each={searchText() ? searchedFiles() : files()}
             >
               {(file) => (
-                <div class="w-full p-2 border-base-200 border-b hover:bg-base-200 transition-colors">
+                <div class="w-full p-2 border-base-200 border-b hover:bg-base-200 transition-colors overflow-clip">
                   <Switch
                     fallback={<div class="alert alert-error rounded-none">Unknown Error</div>}
                   >

@@ -102,8 +102,8 @@ pub fn get_scripts(path: String, max_len: usize) -> Vec<FileInfo> {
 #[tauri::command]
 pub fn set_base_dir() -> Result<String, String> {
     if let Some(path) = rfd::FileDialog::new().pick_folder() {
-      Ok(path.to_str().unwrap().replace("\\", "/").to_string())
+        Ok(path.to_str().unwrap().replace("\\", "/").to_string())
     } else {
-      Err("No folder selected".to_string())
+        Err("No folder selected".to_string())
     }
 }

@@ -19,7 +19,7 @@ export default function Sidebar() {
           value={tab()}
           onValueChange={(v) => setTab(v.value)}
         >
-          <Tabs.List role="tablist" class="tabs tabs-border flex pb-2 border-b border-base-200">
+          <Tabs.List role="tablist" class="tabs tabs-border flex h-14 pb-2 border-b border-base-200">
             <Tabs.Trigger
               role="tab"
               class="w-full flex-1 h-12 p-2 tab"
@@ -38,7 +38,8 @@ export default function Sidebar() {
             </Tabs.Trigger>
           </Tabs.List>
           <Tabs.Content
-            class="h-full"
+            class=""
+            style={{height: 'calc(100% - 3.5rem)'}}
             value="files"
             children={<Files rootDir={globalStore.baseDir} />}
           />

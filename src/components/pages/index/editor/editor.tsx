@@ -31,7 +31,7 @@ const setEditingFilePathWithCheck: Setter<EditingFilePath> = async (
 
 export { editingFilePath, setEditingFilePathWithCheck as setEditingFilePath };
 
-export default function Editor() {
+export default function TiptapEditor() {
   const editor = useEditor({
     extensions: TiptapExtensions,
     content: ``,
@@ -41,7 +41,7 @@ export default function Editor() {
   });
 
   whenever(editingFilePath, async () => {
-    console.log(editingFilePath());
+    console.log('editing:', editingFilePath());
 
     lastEditingFilePath && await save(lastEditingFilePath, editor().getJSON());
     globalStore.saved = true;
@@ -76,7 +76,7 @@ export default function Editor() {
   if (isDev) {
     const json = () => editor().getJSON();
     editor().on("update", () => {
-      console.log(JSON.stringify(json(), null, 2));
+      console.log('content', JSON.stringify(json(), null, 2));
     });
   }
 

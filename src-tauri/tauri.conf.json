@@ -9,15 +9,7 @@
   "productName": "TYS",
   "version": "0.0.1",
   "app": {
-    "windows": [
-      {
-        "fullscreen": false,
-        "resizable": true,
-        "title": "TYS",
-        "width": 1280,
-        "height": 720
-      }
-    ]
+    "windows": []
   },
   "bundle": {
     "active": true,
@@ -29,10 +21,22 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
+    "windows": {
+      "nsis": {
+        "languages": ["SimpChinese"]
+      }
+    },
     "linux": {
       "appimage": {
         "bundleMediaFramework": false
       }
-    }
+    },
+    "fileAssociations": [
+      {
+        "ext": ["ykm"],
+        "mimeType": "text",
+        "rank": "Default"
+      }
+    ]
   }
 }
