@@ -4,10 +4,11 @@ import isYkmPath from "@/scripts/yukimi/checkers/ykm-path";
 import { save } from "@/scripts/yukimi/save";
 import { globalStore } from "@/store/global";
 import { exists, readTextFile } from "@tauri-apps/plugin-fs";
-import { SolidEditorContent, useEditor } from "@vrite/tiptap-solid";
+import { useEditor } from "@vrite/tiptap-solid";
 import { Setter, createSignal, onMount } from "solid-js";
 import { isDev } from "solid-js/web";
 import { onKeyStroke, whenever } from "solidjs-use";
+import Editor from "./editor/Editor";
 import EditorFooter from "./footer/footer";
 import EditorMenu from "./menu/menu";
 
@@ -84,11 +85,12 @@ export default function TiptapEditor() {
     <div class="flex-auto w-full h-full flex flex-col bg-base-200 overflow-hidden">
       <EditorMenu editor={editor()} />
       <div class="flex-auto w-full max-w-full h-full max-h-full overflow-hidden bg-base-100 cursor-text">
-        <SolidEditorContent
+        <Editor class="w-full h-full max-h-full max-w-full p-6 prose prose-sm overflow-auto spelling-error selection:bg-base-200"/>
+        {/* <SolidEditorContent
           editor={editor()}
           onClick={(ev) => ev.target === ev.currentTarget && editor()?.commands.focus()}
           class="w-full h-full max-h-full max-w-full p-6 pl-16 prose prose-sm overflow-auto spelling-error selection:bg-base-200"
-        ></SolidEditorContent>
+        ></SolidEditorContent> */}
       </div>
       <EditorFooter editor={editor()} />
     </div>

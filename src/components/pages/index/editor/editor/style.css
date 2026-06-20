@@ -1,0 +1,27 @@
+.cursor {
+  height: inherit;
+
+  &::before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-right: 2px solid var(--color-primary);
+    animation: blink 1s infinite;
+  }
+}
+
+@keyframes blink {
+  20% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  80% {
+    opacity: 1
+  }
+}

@@ -13,7 +13,8 @@ declare module "@tiptap/core" {
 
 const Dialog = Paragraph.extend({
   name: "dialog",
-  content: "text*",
+  group: "block",
+  content: "heading paragraph+",
   marks: "",
 
   parseHTML: () => [

@@ -1,5 +1,5 @@
 import { Editor } from "@tiptap/core";
-import { BsTree, BsChatLeftText, BsCommand, BsTypeBold, BsTypeItalic } from "solid-icons/bs";
+import { BsChatLeftText, BsCommand, BsTree, BsTypeBold, BsTypeItalic } from "solid-icons/bs";
 import { useEditorIsActive } from "solid-tiptap";
 
 export default function CommonPanel(props: { editor: Editor }) {

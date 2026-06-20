@@ -1,9 +1,7 @@
 import "./cmd.scss";
 
-import Component from "./component";
-import { SolidNodeViewRenderer } from "@vrite/tiptap-solid";
-import { CommandProps, InputRule, Node, RawCommands } from "@tiptap/core";
 import { CommandArg } from "@/scripts/yukimi/command-manager";
+import { CommandProps, InputRule, Node, RawCommands } from "@tiptap/core";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -20,7 +18,9 @@ export type CommandAttrs = {
   expanded?: boolean;
 };
 
-const Cmd = Node.create({
+const Cmd = Node.create(() => {
+
+  return {
   name: "cmd",
   group: "block",
   content: "text*",
@@ -61,10 +61,6 @@ const Cmd = Node.create({
         },
     } as Partial<RawCommands>;
   },
-
-  addNodeView() {
-    return SolidNodeViewRenderer(Component);
-  },
-});
+}});
 
 export default Cmd;

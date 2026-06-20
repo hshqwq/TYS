@@ -16,6 +16,8 @@ type CmdInputProps = {
 
 function CmdInput(props: CmdInputProps) {
   const options = () => props.options || [];
+  console.log(props);
+
 
   return (
     <label contentEditable={false} class="form-control w-full max-w-max">
