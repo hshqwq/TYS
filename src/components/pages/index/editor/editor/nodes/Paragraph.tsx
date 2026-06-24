@@ -1,13 +1,13 @@
 import { deleteRange } from "@/scripts/util/editor";
 import { useContext } from "solid-js";
 import { editorContext, INode } from "../Editor";
-import Text, { CreateNode, createNodeElement } from "./Text";
+import { CreateNode, createNodeElement, Text } from "./Text";
 
 export interface IParagraph extends INode {
   name: 'paragraph';
 }
 
-export default createNodeElement(function Paragraph(props) {
+export default createNodeElement('paragraph', function Paragraph(props) {
   const store = useContext(editorContext);
 
   return <p
@@ -34,6 +34,7 @@ export const createParagraph: CreateNode<IParagraph> = (node) => ({
       next: store.document[i + 1] || null,
       value: newValue,
     });
+    if (store.document[i + 1]) store.document[i + 1].prev = newNode;
     store.document.splice(i + 1, 0, newNode);
     deleteRange(store, store.cursor);
     store.cursor = { start: { index: store.cursor.start.index + 1, offset: 0 }, end: { index: store.cursor.start.index + 1, offset: 0 } };

@@ -9,6 +9,9 @@ import { Setter, createSignal, onMount } from "solid-js";
 import { isDev } from "solid-js/web";
 import { onKeyStroke, whenever } from "solidjs-use";
 import Editor from "./editor/Editor";
+import Paragraph from "./editor/nodes/Paragraph";
+import Scene from "./editor/nodes/Scene/Scene";
+import Text from "./editor/nodes/Text";
 import EditorFooter from "./footer/footer";
 import EditorMenu from "./menu/menu";
 
@@ -85,7 +88,10 @@ export default function TiptapEditor() {
     <div class="flex-auto w-full h-full flex flex-col bg-base-200 overflow-hidden">
       <EditorMenu editor={editor()} />
       <div class="flex-auto w-full max-w-full h-full max-h-full overflow-hidden bg-base-100 cursor-text">
-        <Editor class="w-full h-full max-h-full max-w-full p-6 prose prose-sm overflow-auto spelling-error selection:bg-base-200"/>
+        <Editor
+          class="w-full h-full max-h-full max-w-full p-6 prose prose-sm overflow-auto spelling-error selection:bg-base-200"
+          nodes={[Text, Paragraph, Scene]}
+        />
         {/* <SolidEditorContent
           editor={editor()}
           onClick={(ev) => ev.target === ev.currentTarget && editor()?.commands.focus()}

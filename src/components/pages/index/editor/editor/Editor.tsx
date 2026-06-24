@@ -3,8 +3,8 @@ import { createContext, createEffect, createMemo, For, JSX, JSXElement, onMount 
 import { createMutable } from "solid-js/store";
 import { onKeyStroke, useEventListener, useFocusWithin } from "solidjs-use";
 import NodeMatch from "./nodes/NodeMatch";
-import Paragraph, { createParagraph } from "./nodes/Paragraph";
-import Text, { NodeProps } from './nodes/Text';
+import { createParagraph } from "./nodes/Paragraph";
+import { NodeProps } from './nodes/Text';
 
 export type EventHandler = (node: INode, store: EditorContext, index: number) => void;
 
@@ -28,6 +28,13 @@ export type EditorRange = {
   };
 };
 
+export type InputRule = (newValue: string, node: INode, i: number, store: EditorContext) => false | string;
+export type NodeComponent<T extends string = string> = {
+  name: T;
+  component: (props: NodeProps) => JSX.Element;
+  inputRules: InputRule[];
+};
+
 export type EditorContext = {
   cursor: EditorRange;
   selecting: boolean;
@@ -46,24 +53,34 @@ const defaultEditorStore: EditorContext = {
 
 export const editorContext = createContext<EditorContext>(defaultEditorStore);
 
+export type NodeContext = Map<string, (props: NodeProps) => JSX.Element>;
 
-export const nodeMap = new Map<string, (props: NodeProps) => JSXElement>();
-nodeMap.set('text', Text);
-nodeMap.set('paragraph', Paragraph);
+const defaultNodeStore: NodeContext = new Map<string, (props: NodeProps) => JSX.Element>();
+
+export const nodeContext = createContext<NodeContext>(defaultNodeStore);
 
 export default function Editor(props: {
   defaultValue?: string,
   class: string;
+  nodes: NodeComponent[];
   onUpdate?: (content: string) => void;
   autoFocus?: boolean;
 }) {
   let editorRef!: HTMLDivElement;
   let inputRef!: HTMLInputElement;
   let composition = false;
-  let cursorSyncLock = false;
   const editorStore = createMutable<EditorContext>(defaultEditorStore);
   const currentNode = () => editorStore.currentNode;
   const currentIndex = createMemo(() => editorStore.document.findIndex(node => node === currentNode()));
+  const nodeMap = createMemo(() => props.nodes.reduce((map, { name, component }) => {
+    map.set(name, component);
+    return map;
+  }, new Map<string, (props: NodeProps) => JSXElement>()));
+  const inputRules = createMemo(() => props.nodes.reduce((rules, { inputRules }) => {
+    rules.push(...inputRules);
+    return rules;
+  }, [] as InputRule[]));
+
   createEffect(() => {
     // handle empty document
     if (!editorStore.document.length) {
@@ -113,6 +130,15 @@ export default function Editor(props: {
   const onInputHandler: JSX.InputEventHandlerUnion<HTMLInputElement, InputEvent> = (ev) => {
     if (composition || !currentNode()) return;
     currentNode()!.value = ev.currentTarget.value;
+    let value: string = ev.currentTarget.value;
+    for (const rule of inputRules()) {
+      const res = rule(value, currentNode()!, currentIndex(), editorStore);
+      if (res !== false) {
+        value = res;
+        break;
+      }
+    }
+    currentNode()!.value = value;
   };
 
   onKeyStroke('ArrowUp', (ev) => {
@@ -163,7 +189,6 @@ export default function Editor(props: {
   });
   onKeyStroke('Enter', (ev) => {
     ev.preventDefault();
-    cursorSyncLock = true;
     currentNode()?.onBreakLine?.(currentNode()!, editorStore, editorStore.document.indexOf(currentNode()!));
   });
   onKeyStroke('Backspace', (ev) => {
@@ -172,8 +197,8 @@ export default function Editor(props: {
         ev.preventDefault();
         const len = editorStore.document[editorStore.cursor.start.index - 1].value.length;
         deleteRange(editorStore, { start: { index: editorStore.cursor.start.index - 1, offset: editorStore.document[editorStore.cursor.start.index - 1].value.length }, end: editorStore.cursor.end });
-        editorStore.currentNode = editorStore.document[editorStore.cursor.start.index-1];
-        editorStore.cursor.end = editorStore.cursor.start = {index: editorStore.cursor.start.index - 1, offset: len };
+        editorStore.currentNode = editorStore.document[editorStore.cursor.start.index - 1];
+        editorStore.cursor.end = editorStore.cursor.start = { index: editorStore.cursor.start.index - 1, offset: len };
       }
       return;
     }
@@ -184,38 +209,40 @@ export default function Editor(props: {
   });
 
   return <editorContext.Provider value={editorStore}>
-    <div tabIndex={0} ref={editorRef} class={'relative w-full h-full ' + props.class || ''}>
-      <button class='btn btn-sm absolute bottom-8' onClick={() => console.log(editorStore)}>log</button>
-      <input
-        ref={inputRef}
-        class="absolute bottom-0 input input-xs"
-        type="text"
-        disabled={!currentNode()}
-        value={currentNode()?.value || ''}
-        onInput={onInputHandler}
-        onCompositionStart={() => composition = true}
-        onCompositionEnd={(ev) => {
-          composition = false;
-          onInputHandler(ev as unknown as InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement; });
-        }}
-        onBlur={() => {
-          composition = false;
-          if (editorStore.focused) inputRef.focus();
-        }}
-        onSelectionChange={(ev) => {
-          if (cursorSyncLock) return cursorSyncLock = false;
-          const { selectionStart, selectionEnd } = ev.currentTarget;
+    <nodeContext.Provider value={nodeMap()}>
+      <div tabIndex={0} ref={editorRef} class={'relative w-full h-full ' + props.class || ''}>
+        <button class='btn btn-sm absolute bottom-8' onClick={() => console.log(editorStore)}>log</button>
+        <input
+          ref={inputRef}
+          class="absolute bottom-0 input input-xs"
+          type="text"
+          disabled={!currentNode()}
+          value={currentNode()?.value || ''}
+          onInput={onInputHandler}
+          onCompositionStart={() => composition = true}
+          onCompositionEnd={(ev) => {
+            composition = false;
+            onInputHandler(ev as unknown as InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement; });
+          }}
+          onBlur={() => {
+            composition = false;
+            if (editorStore.focused) inputRef.focus();
+          }}
+          onSelectionChange={(ev) => {
+            const { selectionStart, selectionEnd } = ev.currentTarget;
 
-          if (editorStore.selecting) return;
-          editorStore.cursor = {
-            start: { index: currentIndex(), offset: selectionStart || 0 },
-            end: { index: currentIndex(), offset: selectionEnd || 0 }
-          };
-        }}
-      ></input>
-      <div class='relative break-all p-4'>
-        <For each={editorStore.document}>{(node, i) => <NodeMatch node={node} index={i()} height={'1rem'} />}</For>
+            if (editorStore.selecting) return;
+
+            editorStore.cursor = {
+              start: { index: currentIndex(), offset: selectionStart || 0 },
+              end: { index: currentIndex(), offset: selectionEnd || 0 }
+            };
+          }}
+        ></input>
+        <div class='relative break-all p-4 pl-8'>
+          <For each={editorStore.document}>{(node, i) => <NodeMatch node={node} index={i()} height={'1rem'} />}</For>
+        </div>
       </div>
-    </div>
+    </nodeContext.Provider>
   </editorContext.Provider>;
 }

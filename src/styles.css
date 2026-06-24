@@ -2,6 +2,7 @@
 @plugin "daisyui" {
   themes: fantasy --default;
 }
+@plugin "@tailwindcss/typography";
 
 * {
   outline: none;

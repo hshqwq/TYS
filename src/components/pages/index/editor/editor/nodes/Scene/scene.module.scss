@@ -1,0 +1,9 @@
+@import "../index.scss";
+
+.scene {
+  @include node('场景');
+
+  &::before {
+    line-height: 1.75rem;
+  }
+}
