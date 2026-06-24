@@ -1,3 +1,4 @@
+import { deleteRange } from "@/scripts/util/editor";
 import { createContext, createEffect, createMemo, For, JSX, JSXElement, onMount } from "solid-js";
 import { createMutable } from "solid-js/store";
 import { onKeyStroke, useEventListener, useFocusWithin } from "solidjs-use";
@@ -80,6 +81,10 @@ export default function Editor(props: {
     };
   });
 
+  // createEffect(() => {
+  //   editorStore.currentNode = editorStore.document[editorStore.cursor.end.index];
+  // })
+
   onMount(() => {
     const focused = useFocusWithin(editorRef);
     if (props.autoFocus) editorRef.focus();
@@ -96,16 +101,12 @@ export default function Editor(props: {
       inputRef.selectionEnd = editorStore.cursor.end.offset;
     });
 
-    useEventListener(editorRef, 'mousedown', (ev) => {
+    useEventListener(editorRef, 'mousedown', () => {
       editorStore.selecting = true;
-      console.log('sel');
-
     });
 
-    useEventListener(editorRef, 'mouseup', (ev) => {
+    useEventListener(editorRef, 'mouseup', () => {
       editorStore.selecting = false;
-      console.log('seee');
-
     });
   });
 
@@ -127,8 +128,8 @@ export default function Editor(props: {
     //     inputRef.selectionEnd = offset;
     //   }
     // } else {
-      editorStore.cursor.start.index = editorStore.cursor.end.index = currentIndex();
-      if (offset !== null) inputRef.selectionStart = inputRef.selectionEnd = offset;
+    editorStore.cursor.start.index = editorStore.cursor.end.index = currentIndex();
+    if (offset !== null) inputRef.selectionStart = inputRef.selectionEnd = offset;
     // }
   });
   onKeyStroke('ArrowDown', (ev) => {
@@ -144,8 +145,8 @@ export default function Editor(props: {
     //     inputRef.selectionEnd = offset;
     //   }
     // } else {
-      editorStore.cursor.start.index = editorStore.cursor.end.index = currentIndex();
-      if (offset !== null) inputRef.selectionStart = inputRef.selectionEnd = offset;
+    editorStore.cursor.start.index = editorStore.cursor.end.index = currentIndex();
+    if (offset !== null) inputRef.selectionStart = inputRef.selectionEnd = offset;
     // }
   });
   onKeyStroke('ArrowLeft', (ev) => {
@@ -164,6 +165,22 @@ export default function Editor(props: {
     ev.preventDefault();
     cursorSyncLock = true;
     currentNode()?.onBreakLine?.(currentNode()!, editorStore, editorStore.document.indexOf(currentNode()!));
+  });
+  onKeyStroke('Backspace', (ev) => {
+    if (editorStore.cursor.start.index === editorStore.cursor.end.index) {
+      if (editorStore.cursor.start.offset === 0 && editorStore.cursor.start.index > 0) {
+        ev.preventDefault();
+        const len = editorStore.document[editorStore.cursor.start.index - 1].value.length;
+        deleteRange(editorStore, { start: { index: editorStore.cursor.start.index - 1, offset: editorStore.document[editorStore.cursor.start.index - 1].value.length }, end: editorStore.cursor.end });
+        editorStore.currentNode = editorStore.document[editorStore.cursor.start.index-1];
+        editorStore.cursor.end = editorStore.cursor.start = {index: editorStore.cursor.start.index - 1, offset: len };
+      }
+      return;
+    }
+    ev.preventDefault();
+    deleteRange(editorStore, editorStore.cursor);
+    editorStore.currentNode = editorStore.document[editorStore.cursor.start.index];
+    editorStore.cursor.end = editorStore.cursor.start;
   });
 
   return <editorContext.Provider value={editorStore}>
@@ -194,10 +211,6 @@ export default function Editor(props: {
             start: { index: currentIndex(), offset: selectionStart || 0 },
             end: { index: currentIndex(), offset: selectionEnd || 0 }
           };
-        }}
-        onSelectStart={(ev) => {
-          console.log('selection');
-
         }}
       ></input>
       <div class='relative break-all p-4'>

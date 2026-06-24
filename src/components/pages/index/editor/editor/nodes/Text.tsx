@@ -18,7 +18,6 @@ export default function Text(props: NodeProps) {
   let nodeRef!: HTMLSpanElement;
   const store = useContext(editorContext);
   const content = () => {
-
     const value = props.node.value;
     const { start, end } = store.cursor;
 
@@ -43,21 +42,6 @@ export default function Text(props: NodeProps) {
   };
   onMount(() => {
     props.ref = nodeRef;
-
-    // createEffect(() => {
-    //   const selection = window.getSelection();
-    //   console.log(range);
-
-    //   // if (range && selection.ra) selection?.removeRange(range);
-    //   if (!selection || store.cursor.start.index > props.index) return;
-    //   range = document.createRange();
-    //   range.setStart(nodeRef, store.cursor.start.offset);
-    //   if(store.cursor.end.index !== props.index)
-    //     range.setEnd(nodeRef, props.node.value.length);
-    //   else
-    //     range.setEnd(nodeRef, store.cursor.end.offset);
-    //   selection?.addRange(range);
-    // });
   });
 
   const getOffsetFromPosition = (position: CaretPosition) => {
@@ -89,8 +73,6 @@ export default function Text(props: NodeProps) {
       if (!store.selecting) return;
       const position = document.caretPositionFromPoint(e.clientX, e.clientY);
       if (!position) return;
-      console.log(getOffsetFromPosition(position), props.index, position.offset, JSON.stringify(store.cursor));
-
       store.cursor.end = { index: props.index, offset: getOffsetFromPosition(position) };
     }}
     // onMouseUp={(e) => {
