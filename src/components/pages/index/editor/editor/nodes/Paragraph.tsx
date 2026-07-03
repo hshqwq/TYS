@@ -11,7 +11,7 @@ export default createNodeElement('paragraph', function Paragraph(props) {
   const store = useContext(editorContext);
 
   return <p
-    class='min-h-4 max-h-fit leading-4 my-2'
+    class='min-h-4 max-h-fit leading-4 my-0'
     onClick={(e) => {
       if (e.target !== e.currentTarget) return;
       store.currentNode = props.node;

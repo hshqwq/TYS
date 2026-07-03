@@ -127,6 +127,10 @@ export default function Editor(props: {
     });
   });
 
+  createEffect(() => {
+    editorStore.currentNode = editorStore.document[editorStore.cursor.end.index];
+  })
+
   const onInputHandler: JSX.InputEventHandlerUnion<HTMLInputElement, InputEvent> = (ev) => {
     if (composition || !currentNode()) return;
     currentNode()!.value = ev.currentTarget.value;

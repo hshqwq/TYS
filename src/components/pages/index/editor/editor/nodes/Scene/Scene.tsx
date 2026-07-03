@@ -62,6 +62,7 @@ export const createScene: CreateNode<IScene> = (node) => ({
       if(node.prev) node.prev.next = newNode;
       node.prev = newNode;
       store.document.splice(i, 0, newNode);
+      store.cursor.start = store.cursor.end = { index: store.cursor.start.index + 1, offset: 0 };
       return;
     }
     const newValue = node.value.slice(store.cursor.end.offset, node.value.length);
@@ -74,6 +75,6 @@ export const createScene: CreateNode<IScene> = (node) => ({
     if (store.document[i + 1]) store.document[i + 1].prev = newNode;
     store.document.splice(i + 1, 0, newNode);
     deleteRange(store, store.cursor);
-    store.cursor = { start: { index: store.cursor.start.index + 1, offset: 0 }, end: { index: store.cursor.start.index + 1, offset: 0 } };
+    store.cursor.start = store.cursor.end = { index: store.cursor.start.index + 1, offset: 0 };
   }
 });

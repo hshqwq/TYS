@@ -21,6 +21,7 @@ export function Text(props: NodeProps) {
   const store = useContext(editorContext);
   const content = () => {
     const [s, e] = props.visibleRange || [0, props.node.value.length];
+    // const [s, e] = [0, props.node.value.length];
     const value = props.node.value.slice(s, e);
     const start = { index: store.cursor.start.index, offset: clamp(store.cursor.start.offset - s, 0, e) };
     const end = { index: store.cursor.end.index, offset: clamp(store.cursor.end.offset - s, 0, e) };
@@ -61,7 +62,7 @@ export function Text(props: NodeProps) {
         } else
           store.cursor.start.offset = props.visibleRange[0];
       }
-      if (store.cursor.start.offset > props.visibleRange[1]) {
+      if (store.cursor.start.offset > props.visibleRange[1]+1) {
         if (store.cursor.start.offset === props.node.value.length)
           store.cursor.start.offset = props.visibleRange[1];
         else if (props.node.next) {
@@ -81,7 +82,7 @@ export function Text(props: NodeProps) {
         } else
           store.cursor.end.offset = props.visibleRange[0];
       }
-      if (store.cursor.end.offset > props.visibleRange[1]) {
+      if (store.cursor.end.offset > props.visibleRange[1]+1) {
         if (store.cursor.end.offset === props.node.value.length)
           store.cursor.end.offset = props.visibleRange[1];
         else if (props.node.next) {
@@ -95,6 +96,7 @@ export function Text(props: NodeProps) {
 
   const getOffsetFromPosition = (position: CaretPosition) => {
     let offset: number = props.visibleRange?.[0] || 0;
+    // let offset: number = 0;
     if (store.currentNode === props.node) {
       for (const child of nodeRef.childNodes.values()) {
         if ((child.nodeType === child.TEXT_NODE ? child : child.firstChild) === position.offsetNode) {
